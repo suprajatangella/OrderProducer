@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,9 +27,16 @@ namespace OrderProducer
                                      autoDelete: false,
                                      arguments: null);
 
-                for (int i = 1; i <= 5; i++)
+            var orders = new Order[]
+            {
+                new Order { OrderID = 101, Product = "Laptop", Quantity = 1 },
+                new Order { OrderID = 102, Product = "Mouse", Quantity = 2 },
+                new Order { OrderID = 103, Product = "Keyboard", Quantity = 1 }
+            };
+
+                foreach (var order in orders)
                 {
-                    string orderMessage = $"Order {i} - Customer {i}";
+                    string orderMessage = JsonConvert.SerializeObject(order);
                     var body = Encoding.UTF8.GetBytes(orderMessage);
 
                     // Publish message
